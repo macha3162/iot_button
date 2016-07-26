@@ -29,7 +29,7 @@ class RoomsController < ApplicationController
     room = Room.find_by!(code: params[:room_id])
     room.toggle!(:on)
     ActionCable.server.broadcast "room_channel_#{room.id}", message: room.on
-    redirect_to room
+    render json: {button: room.on}
   end
 
   def create
@@ -57,11 +57,11 @@ class RoomsController < ApplicationController
   end
 
   private
-    def set_room
-      @room = Room.find(params[:id])
-    end
+  def set_room
+    @room = Room.find(params[:id])
+  end
 
-    def room_params
-      params.require(:room).permit(:code, :on)
-    end
+  def room_params
+    params.require(:room).permit(:code, :on)
+  end
 end
