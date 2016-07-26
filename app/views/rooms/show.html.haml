@@ -1,0 +1,34 @@
+:javascript
+  $(function(){
+    function change_bgcolor(flag){
+    if (flag) {
+        return $('body').css('background', 'green');
+      } else {
+        return $('body').css('background', 'red');
+      }
+    }
+    App.room = App.cable.subscriptions.create({
+      channel: "RoomChannel",
+      room: "#{params[:id]}"
+      }, {
+        connected: function() {
+        },
+        disconnected: function() {},
+        received: function(data) {
+          change_bgcolor(data['message']);
+        },
+        push: function(button) {
+          return this.perform('push', {
+            button: button
+          });
+        }
+    });
+    change_bgcolor(#{@room.on});
+  });
+
+%p#notice= notice
+
+%p
+  = qrcode_tag room_push_path(@room.code), module_size: 5
+  %br
+  = link_to @room.code, room_push_path(@room.code), remote: true
